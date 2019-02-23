@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import contacts from './contacts.json'
+import DynamicContactList from './components/DynamicContactList';
 import logo from './logo.svg';
 import './App.css';
 
@@ -13,6 +15,7 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
+        <DynamicContactList></DynamicContactList>
       </div>
     );
   }
