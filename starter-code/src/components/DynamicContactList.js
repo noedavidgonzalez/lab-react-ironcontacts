@@ -1,45 +1,28 @@
 import React, { Component } from 'react';
 import contactList from '../contacts.json';
 import DetalleLista from './DetalleLista';
-
+import _ from 'lodash';
 class DynamicContactList extends Component {
   state = {
-      contactos: [
-        {
-          name: contactList[0].name,
-          picture: contactList[0].pictureUrl,
-          popularity: contactList[0].popularity
-        },
-        {
-          name: contactList[1].name,
-          picture: contactList[1].pictureUrl,
-          popularity: contactList[1].popularity
-        },
-        {
-          name: contactList[2].name,
-          picture: contactList[2].pictureUrl,
-          popularity: contactList[2].popularity
-        },
-        {
-          name: contactList[3].name,
-          picture: contactList[3].pictureUrl,
-          popularity: contactList[3].popularity
-        },
-        {
-          name: contactList[4].name,
-          picture: contactList[4].pictureUrl,
-          popularity: contactList[4].popularity
+      contactos: []
+    }
+    componentWillMount=()=>{ 
+      let primerosCinco=[];
+      for (let i = 0; i < 5; i++) {
+        let elContacto = {
+          name: contactList[i].name,
+          picture: contactList[i].pictureUrl,
+          popularity: contactList[i].popularity
         }
-      ]
+        primerosCinco.push(elContacto);
+      }
+      this.setState({
+        contactos: primerosCinco
+      })
     }
 
     addRandomContact = () => {
-      let nuevosContactos = []
-      // nuevosContactos.push(this.state.contactos)
-      this.state.contactos.map((contacto, index) => {
-        nuevosContactos.push(contacto)
-      })
-
+      let nuevosContactos = this.state.contactos; 
       for (let i=0; i<5; i++) {
         const randomNumber = 0 + Math.floor((Math.random() * (0 + contactList.length)))
         let elContacto = {
@@ -48,31 +31,43 @@ class DynamicContactList extends Component {
           popularity: contactList[randomNumber].popularity
         }
         nuevosContactos.push(elContacto);
-
       }
       this.setState({
         contactos: nuevosContactos
-      })
-      console.log(nuevosContactos)
+      }) 
+    }
+    sortByName=()=>{ 
+      let contactos = _.orderBy(this.state.contactos, [c => c.name], ['asc']).slice(0, this.state.contactos.length)
+      this.setState({ contactos }) 
+    }
+    sortByPopularity = () => {
+
+      let contactos = _.orderBy(this.state.contactos, [c => c.popularity], ['asc']).slice(0, this.state.contactos.length)
+      this.setState({ contactos })
+    }
+    deleteContact=(contactIndex)=>{
+      let contactos = this.state.contactos;
+      contactos.splice(contactIndex, 1); 
+      this.setState({ contactos})
     }
 
-    render(){
-      // console.log('Estado', this.state.contactos)
+    render(){ 
       return (
         <div className="format">
-
-        <button onClick={this.addRandomContact}>Add Random Contact</button>
-          
+          <button onClick={this.addRandomContact}>Add Random Contact</button>
+          <button onClick={this.sortByName}>Sort by Name</button>
+          <button onClick={this.sortByPopularity}>Sort by popularity</button>
           <div className="layout">
-            <div>Picture</div>
-            <div>Name</div>
-            <div>Popularity</div>
+            <div><h2>Picture</h2></div>
+            <div><h2>Name</h2></div>
+            <div><h2>Popularity</h2></div>
+            <div> </div>
           </div>
 
           <div className="">
             {
               this.state.contactos.map((contacto, index) => {
-                return <DetalleLista key={index} {...contacto}></DetalleLista>
+                return <DetalleLista key={index} {...contacto} clickToDelete={() => this.deleteContact(index)}></DetalleLista>
               })
             }
           </div>
@@ -83,16 +78,3 @@ class DynamicContactList extends Component {
   }
 
   export default DynamicContactList;
-
-  // class DynamicContactList extends Component {
-  //   constructor () {
-  //     super()
-  //     this.state = {
-  //       contactos: [
-
-  //       ]
-  //     }
-  //   }
-  // }
-
-  // 0 + Math.floor((Math.random() * (0 + contactList.length)))
